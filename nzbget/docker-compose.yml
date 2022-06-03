@@ -1,0 +1,40 @@
+#/media/downloads/completeversion: '3.1'
+
+services:
+  nzbget:
+    image: linuxserver/nzbget
+    restart: always
+    ports:
+      - "6789:6789"
+    environment:
+      - PUID=1001
+      - PGID=1001
+    volumes:
+      - ~/docker/nzbget/config:/config
+      - /mnt/Storage_And_Media/usenet/downloads:/downloads/
+      - /mnt/Storage_And_Media/usenet/incomplete:/downloads/incomplete
+    container_name: nzbget
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nzbget.entrypoints=web
+      - traefik.http.routers.nzbget.rule=Host(`nzbget.stark.dog`)
+      - traefik.http.routers.nzbget.middlewares=redirect@file
+      - traefik.http.routers.nzbget.priority=1
+
+      #https
+      - traefik.http.routers.nzbget-secure.entrypoints=web-secure
+      - traefik.http.routers.nzbget-secure.rule=Host(`nzbget.stark.dog`)
+      - traefik.http.routers.nzbget-secure.tls=true
+      - traefik.http.routers.nzbget-secure.service=nzbget-svc
+      - traefik.docker.network=traefik
+
+      # service
+      - traefik.http.services.nzbget-svc.loadbalancer.server.port=6789
+
+      # add to router
+      - traefik.http.routers.nzbget-secure.middlewares=secure-frame-header@file
+
+networks:
+  default:
+    external:
+      name: traefik

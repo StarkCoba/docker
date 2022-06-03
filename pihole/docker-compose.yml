@@ -1,0 +1,100 @@
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  cloudflared:
+    container_name: cloudflared
+    # Restart on crashes and on reboots
+    restart: unless-stopped
+    image: klutchell/cloudflared
+    command: proxy-dns
+    environment:
+      - "TUNNEL_DNS_UPSTREAM=https://1.1.1.1/dns-query,https://1.0.0.1/dns-query,https://9.9.9.9/dns-query,https://149.112.112.9/dns-query"
+
+      # Listen on an unprivileged port
+      - "TUNNEL_DNS_PORT=5053"
+
+      # Listen on all interfaces
+      - "TUNNEL_DNS_ADDRESS=0.0.0.0"
+
+    # Attach cloudflared only to the private network
+    networks:
+      internal:
+        ipv4_address: 172.30.9.2
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "192.168.86.198:53:53/tcp"
+      - "192.168.86.198:53:53/udp"
+        #      - "67:67/udp"
+      - "8077:80/tcp"
+        #- "44377:443/tcp"
+        #dns:
+        #  - "127.0.0.1"
+        #  - "1.1.1.1"
+    environment:
+      TZ: 'America/New York'
+      ServerIP: 192.168.86.198
+      VIRTUAL_HOST: pihole.stark.dog
+      VIRTUAL_PORT: 80
+
+      # Internal IP of the cloudflared container
+      DNS1: '172.30.9.2#5053'
+
+      # Explicitly disable a second DNS server, otherwise Pi-hole uses Google
+      DNS2: 'no'
+
+      # Listen on all interfaces and permit all origins
+      # This allows Pihole to work in this setup and when answering across VLANS,
+      # but do not expose pi-hole to the internet!
+      DNSMASQ_LISTENING: 'all'
+    # Volumes store your data between container upgrades
+    volumes:
+      - './config/etc-pihole/:/etc/pihole/'
+      - './config/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      - './config/external.conf:/etc/lighthttpd/external.conf'
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    #cap_add:
+    #  - NET_ADMIN
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pihole.entrypoints=web
+      - traefik.http.routers.pihole.rule=Host(`pihole.stark.dog`)
+      - traefik.http.routers.pihole.middlewares=redirect@file
+      - traefik.http.routers.pihole.priority=1
+
+       # https
+      - traefik.http.routers.pihole-secure.entrypoints=web-secure
+      - traefik.http.routers.pihole-secure.rule=Host(`pihole.stark.dog`)
+      - traefik.http.routers.pihole-secure.tls=true
+      - traefik.http.routers.pihole-secure.service=pihole-svc
+      - traefik.docker.network=traefik
+
+      # service
+      - traefik.http.services.pihole-svc.loadbalancer.server.port=80
+
+      # add to router
+      - traefik.http.routers.pihole-secure.middlewares=secure-frame-header@file
+
+    restart: unless-stopped
+    
+    # Starts cloudflard before Pi-hole
+    depends_on:
+      - cloudflared
+    networks:
+      internal:
+        ipv4_address: 172.30.9.3
+      default:
+
+networks:
+  # Create the internal network
+  internal:
+    ipam:
+      config:
+        - subnet: 172.30.9.0/29
+  default:
+     external:
+       name: traefik

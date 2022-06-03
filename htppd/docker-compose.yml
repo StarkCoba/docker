@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  apache:
+    restart: unless-stopped
+    image: httpd:latest
+    container_name: my-apache-app
+    ports:
+      - '8023:80'
+      - '8443:443'
+    volumes:
+      - /mnt/Storage_And_Media/website:/usr/local/apache2/htdocs
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.httpd.entrypoints=web
+      - traefik.http.routers.httpd.rule=Host(`www.stark.dog`)
+      - traefik.http.routers.httpd.middlewares=redirect@file
+      - traefik.http.routers.httpd.priority=1
+
+      # https
+      - traefik.http.routers.httpd-secure.entrypoints=web-secure
+      - traefik.http.routers.httpd-secure.rule=Host(`www.stark.dog`)
+      - traefik.http.routers.httpd-secure.tls=true
+      - traefik.http.routers.httpd-secure.service=httpd-svc
+      - traefik.docker.network=traefik
+
+      # service
+      - traefik.http.services.httpd-svc.loadbalancer.server.port=8023
+
+      # add to router
+      - traefik.http.routers.httpd-secure.middlewares=secure-frame-header@file
+    

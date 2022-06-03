@@ -1,0 +1,58 @@
+version: '2.3'
+
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    restart: always
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - VERSION=latest
+    volumes:
+      - ~/docker/plex/config:/config
+      - /mnt/Storage_And_Media/media/tv:/media/tv
+      - /mnt/Storage_And_Media/media/movies:/media/movies
+      #- /media/tvlive:/media/tvlive
+    ports:
+     - 32400:32400 
+     - 1900:1900/udp 
+     - 3005:3005 
+     - 5353:5353/udp 
+     - 8324:8324 
+     - 32410:32410/udp 
+     - 32412:32412/udp 
+     - 32413:32413/udp 
+     - 32414:32414/udp 
+     - 32469:32469
+
+    container_name: plex
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=*
+      - traefik.http.routers.service.middlewares=serviceheaders
+      - traefik.http.routers.plex.entrypoints=web
+      - traefik.http.routers.plex.rule=Host(`plex.stark.dog`)
+      - traefik.http.routers.plex.middlewares=redirect@file
+      - traefik.http.routers.plex.priority=1
+
+      # https
+      - traefik.http.routers.plex-secure.entrypoints=web-secure
+      - traefik.http.routers.plex-secure.rule=Host(`plex.stark.dog`)
+      - traefik.http.routers.plex-secure.tls=true
+      - traefik.http.routers.plex-secure.service=plex-svc
+      - traefik.docker.network=traefik
+
+      # service
+      - traefik.http.services.plex-svc.loadbalancer.server.port=32400
+
+      # add to router
+      - traefik.http.routers.plex-secure.middlewares=secure-frame-header@file
+
+
+
+    
+networks:
+  default:
+    external:
+      name: traefik
+

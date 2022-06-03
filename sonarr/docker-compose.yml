@@ -1,0 +1,53 @@
+version: '3.1'
+
+services:
+  sonarr:
+    image: linuxserver/sonarr
+    restart: always
+    ports:
+      - "8989:8989"
+    environment:
+      - PUID=1001
+      - PGID=1001
+
+    volumes:
+      - /dev/rtc:/dev/rtc:ro
+      - ~/docker/sonarr/config:/config
+      - /mnt/Storage_And_Media/media/tv:/media/tv
+      - /mnt/Storage_And_Media/usenet/downloads:/downloads/
+    container_name: sonarr
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.entrypoints=web
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.stark.dog`)
+      - traefik.http.routers.sonarr.middlewares=redirect@file
+      - traefik.http.routers.sonarr.priority=1
+
+      # https
+      - traefik.http.routers.sonarr-secure.entrypoints=web-secure
+      - traefik.http.routers.sonarr-secure.rule=Host(`sonarr.stark.dog`)
+      - traefik.http.routers.sonarr-secure.tls=true
+      - traefik.http.routers.sonarr-secure.service=sonarr-svc
+      - traefik.docker.network=traefik
+      #authentik
+      # # #`authentik-proxy` refers to the service name in the compose file.
+      # - traefik.http.routers.authentik.entrypoints=web-secure
+      # - traefik.http.routers.authentik.tls=true
+      # - traefik.http.routers.authentik.priority=1
+      # - traefik.http.routers.authentik.rule=Host(`sonarr.stark.dog`) && PathPrefix(`/outpost.goauthentik.io/`)
+      # # # `authentik-proxy` refers to the service name in the compose file.
+      # - traefik.http.middlewares.authentik.forwardauth.address=https://auth.stark.dog/outpost.goauthentik.io/callback
+      # - traefik.http.middlewares.authentik.forwardauth.trustForwardHeader=true
+      # - traefik.http.middlewares.authentik.forwardauth.authResponseHeaders=X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid,X-authentik-jwt,X-authentik-meta-jwks,X-authentik-meta-outpost,X-authentik-meta-provider,X-authentik-meta-app,X-authentik-meta-version
+      # service
+      - traefik.http.services.sonarr-svc.loadbalancer.server.port=8989
+      #- traefik.http.services.authentik.loadbalancer.server.port=9000
+
+      # add to router
+      - traefik.http.routers.sonarr-secure.middlewares=secure-frame-header@file
+      #- traefik.http.routers.sonarr-secure.middlewares=authentik@docker
+
+networks:
+   default:
+     external:
+       name: traefik

@@ -1,0 +1,60 @@
+[tls.options]
+  [tls.options.default]
+    minVersion = "VersionTLS12"
+    sniStrict = false
+
+[tls.stores]
+  [tls.stores.default]
+    [tls.stores.default.defaultCertificate]
+      certFile = "/etc/traefik/certs/starkdog-full.pem"
+      keyFile = "/etc/traefik/certs/starkdog-priv.pem"
+
+[http]
+  # Redirect to https
+  [http.middlewares]
+    [http.middlewares.redirect.redirectScheme]
+      scheme = "https"
+    [http.middlewares.secure-header.headers]
+      accessControlAllowMethods= ["GET", "OPTIONS", "PUT"]
+      accessControlMaxAge = 100
+      stsSeconds = 15552000
+      stsIncludeSubdomains = true
+      stsPreload = true
+      forceSTSHeader = true
+      customFrameOptionsValue = "SAMEORIGIN"
+      hostsProxyHeaders = ["X-Forwarded-For"]
+      sslRedirect = true
+      contentTypeNosniff = true
+      browserXssFilter = true
+      referrerPolicy = "same-origin"
+    [http.middlewares.secure-frame-header.headers]
+      accessControlAllowMethods= ["GET", "OPTIONS", "PUT"]
+      accessControlMaxAge = 100
+      customFrameOptionsValue = "SAMEORIGIN"
+      hostsProxyHeaders = ["X-Forwarded-For"]
+      sslRedirect = true
+      contentTypeNosniff = true
+      browserXssFilter = true
+      referrerPolicy = "same-origin"
+      contentSecurityPolicy = "frame-ancestors 'self' https://home.stark.dog" 
+    [http.middlewares.www-redirect.redirectregex]
+      regex = "^(https?://)www.(.*)$"
+      replacement = "${1}${2}"
+    [http.middlewares.serviceheaders.headers]
+      accessControlAllowOriginList="home.stark.dog, plex.stark.dog"
+  [http.services]
+    [http.services.homeassistant.loadbalancer]
+      [[http.services.homeassistant.loadbalancer.servers]]
+        url = "http://192.168.86.198:8123"
+  [http.routers]
+    [http.routers.homeassistant]
+      rule="Host(`ha.stark.dog`)" 
+      service = "homeassistant"
+      middlewares= ["redirect"]
+      entryPoints = ["web"]
+    [http.routers.homeassistant-secure]
+      rule="Host(`ha.stark.dog`)"
+      service = "homeassistant"
+      entryPoints = ["web-secure"]
+      middlewares= ["www-redirect","secure-header"]
+    [http.routers.homeassistant-secure.tls]

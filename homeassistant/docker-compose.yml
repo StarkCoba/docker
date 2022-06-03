@@ -1,0 +1,40 @@
+version: "2.1"
+services:
+  homeassistant:
+    network_mode: "host"
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=America/Fort_Wayne
+    volumes:
+      - ~/docker/homeassistant/config:/config
+    #ports:
+      #- 8123:8123
+    #devices:
+      #- /home/stark/docker/homeassistant/devices:/path/to/device
+    restart: unless-stopped
+    #labels:
+      # - traefik.enable=true
+      # - traefik.http.routers.ha.entrypoints=web
+      # - traefik.http.routers.ha.rule=Host(`ha.stark.dog`)
+      # - traefik.http.routers.ha.middlewares=redirect@file
+      # - traefik.http.routers.ha.priority=1
+
+      # #https
+      # - traefik.http.routers.ha-secure.entrypoints=web-secure
+      # - traefik.http.routers.ha-secure.rule=Host(`ha.stark.dog`)
+      # - traefik.http.routers.ha-secure.tls=true
+      # - traefik.http.routers.ha-secure.service=ha-svc
+      # - traefik.docker.network=traefik
+
+      # # service
+      # - traefik.http.services.ha-svc.loadbalancer.server.port=8123
+
+      # # add to router
+      # - traefik.http.routers.ha-secure.middlewares=secure-frame-header@file
+# networks:
+#   default:
+#     external:
+#       name: traefik
