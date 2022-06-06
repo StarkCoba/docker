@@ -33,8 +33,8 @@ services:
       - traefik.http.services.sonarr-svc.loadbalancer.server.port=8989
 
       # add to router
-      #- traefik.http.routers.sonarr-secure.middlewares=secure-frame-header@file
-      - traefik.http.routers.sonarr-secure.middlewares=traefik-forward-auth@file
+      - traefik.http.routers.sonarr-secure.middlewares=secure-frame-header@file
+      #- traefik.http.routers.sonarr-secure.middlewares=traefik-forward-auth@file
      
 networks:
   default:
