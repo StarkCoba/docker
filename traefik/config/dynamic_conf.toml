@@ -12,6 +12,9 @@
 [http]
   # Redirect to https
   [http.middlewares]
+    [http.middlewares.traefik-forward-auth.forwardauth]
+      address= "http://traefik-forward-auth:4181"
+      authResponseHeaders= "X-Forwarded-User"
     [http.middlewares.redirect.redirectScheme]
       scheme = "https"
     [http.middlewares.secure-header.headers]

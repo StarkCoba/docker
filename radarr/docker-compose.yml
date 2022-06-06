@@ -36,6 +36,6 @@ services:
       - traefik.http.routers.radarr-secure.middlewares=secure-frame-header@file
 
 networks:
-   default:
-     external:
-       name: traefik
+  default:
+    name: traefik
+    external: true

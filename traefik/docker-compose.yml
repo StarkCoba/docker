@@ -13,8 +13,8 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/home/stark/docker/traefik/config/traefik.toml:/etc/traefik/traefik.toml:ro"
       - "/home/stark/docker/traefik/config/dynamic_conf.toml:/etc/traefik/dynamic_conf.toml:ro"
-      - "/home/stark/docker/letsencrypt/certs/live/stark.dog/fullchain.pem:/etc/traefik/certs/starkdog-full.pem:ro"
-      - "/home/stark/docker/letsencrypt/certs/live/stark.dog/privkey.pem:/etc/traefik/certs/starkdog-priv.pem:ro"
+      - "/home/stark/docker/letsencrypt/certs/live/stark.dog-0001/fullchain.pem:/etc/traefik/certs/starkdog-full.pem:ro"
+      - "/home/stark/docker/letsencrypt/certs/live/stark.dog-0001/privkey.pem:/etc/traefik/certs/starkdog-priv.pem:ro"
 
     labels:
       - traefik.enable=true
@@ -43,6 +43,6 @@ services:
 
 
 networks:
-   default:
-     external:
-       name: traefik
+  default:
+    name: traefik
+    external: true

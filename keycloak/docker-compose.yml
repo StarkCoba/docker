@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloakdb
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: V52LgWLWbvVLusEHFWeZa5fjz
+
+  keycloak:
+    depends_on:
+      - postgres
+    container_name: keycloak
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_DATABASE: keycloakdb
+      DB_USER: keycloak
+      DB_PASSWORD: V52LgWLWbvVLusEHFWeZa5fjz
+      KEYCLOAK_VERSION: 18.0.0-legacy
+      PROXY_ADDRESS_FORWARDING: true
+    image: mihaibob/keycloak:18.0.0-legacy
+     
+    ports:
+      - "9877:8080"
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.entrypoints=web
+      - traefik.http.routers.keycloak.rule=Host(`auth.stark.dog`)
+      - traefik.http.routers.keycloak.middlewares=redirect@file
+      - traefik.http.routers.keycloak.priority=1
+
+      # https
+      - traefik.http.routers.keycloak-secure.entrypoints=web-secure
+      - traefik.http.routers.keycloak-secure.rule=Host(`auth.stark.dog`)
+      - traefik.http.routers.keycloak-secure.tls=true
+      - traefik.http.routers.keycloak-secure.service=keycloak-svc
+      - traefik.docker.network=traefik
+      # service
+      - traefik.http.services.keycloak-svc.loadbalancer.server.port=8080
+
+      # add to router
+      - traefik.http.routers.keycloak-secure.middlewares=secure-frame-header@file
+
+
+networks:
+  default:
+    name: traefik
+    external: true

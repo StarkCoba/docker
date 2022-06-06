@@ -1,0 +1,40 @@
+version: "2.1"
+services:
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=America/New_York
+    volumes:
+      - /home/stark/docker/lidarr/config:/config
+      - /mnt/Storage_And_Media/media/music:/music 
+      - /mnt/Storage_And_Media/usenet/downloads:/downloads
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lidarr.entrypoints=web
+      - traefik.http.routers.lidarr.rule=Host(`lidarr.stark.dog`)
+      - traefik.http.routers.lidarr.middlewares=redirect@file
+      - traefik.http.routers.lidarr.priority=1
+
+      # https
+      - traefik.http.routers.lidarr-secure.entrypoints=web-secure
+      - traefik.http.routers.lidarr-secure.rule=Host(`lidarr.stark.dog`)
+      - traefik.http.routers.lidarr-secure.tls=true
+      - traefik.http.routers.lidarr-secure.service=lidarr-svc
+      - traefik.docker.network=traefik
+      # service
+      - traefik.http.services.lidarr-svc.loadbalancer.server.port=8686
+
+      # add to router
+      #- traefik.http.routers.lidarr-secure.middlewares=secure-frame-header@file
+      - traefik.http.routers.lidarr-secure.middlewares=traefik-forward-auth@file
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+
+networks:
+  default:
+    name: traefik
+    external: true

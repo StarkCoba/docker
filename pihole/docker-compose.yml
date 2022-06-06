@@ -54,7 +54,7 @@ services:
     volumes:
       - './config/etc-pihole/:/etc/pihole/'
       - './config/etc-dnsmasq.d/:/etc/dnsmasq.d/'
-      - './config/external.conf:/etc/lighthttpd/external.conf'
+      #- './config/external.conf:/etc/lighthttpd/external.conf'
     # Recommended but not required (DHCP needs NET_ADMIN)
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     #cap_add:
@@ -96,5 +96,5 @@ networks:
       config:
         - subnet: 172.30.9.0/29
   default:
-     external:
-       name: traefik
+    name: traefik
+    external: true
