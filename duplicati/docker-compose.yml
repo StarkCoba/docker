@@ -1,0 +1,39 @@
+version: "2.1"
+services:
+  duplicati:
+    image: lscr.io/linuxserver/duplicati
+    container_name: duplicati
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/New_York
+    volumes:
+      - /home/stark/docker/duplicati/config:/config
+      - /mnt/Storage_And_Media/backup:/backups
+      - /home/stark/docker/:/source
+      - /var/lib/docker/volumes:/volumes
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.duplicati.entrypoints=web
+      - traefik.http.routers.duplicati.rule=Host(`duplicati.stark.dog`)
+      - traefik.http.routers.duplicati.middlewares=redirect@file
+      - traefik.http.routers.duplicati.priority=1
+
+      # https
+      - traefik.http.routers.duplicati-secure.entrypoints=web-secure
+      - traefik.http.routers.duplicati-secure.rule=Host(`duplicati.stark.dog`)
+      - traefik.http.routers.duplicati-secure.tls=true
+      - traefik.http.routers.duplicati-secure.service=duplicati-svc
+      - traefik.docker.network=traefik
+      # service
+      - traefik.http.services.duplicati-svc.loadbalancer.server.port=8200
+
+      # add to router
+      - traefik.http.routers.duplicati-secure.middlewares=secure-frame-header@file
+      #- traefik.http.routers.duplicati-secure.middlewares=traefik-forward-auth@file
+
+networks:
+  default:
+    name: traefik
+    external: true
