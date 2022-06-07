@@ -28,8 +28,8 @@ services:
       - traefik.http.services.lidarr-svc.loadbalancer.server.port=8686
 
       # add to router
-      #- traefik.http.routers.lidarr-secure.middlewares=secure-frame-header@file
-      - traefik.http.routers.lidarr-secure.middlewares=traefik-forward-auth@file
+      - traefik.http.routers.lidarr-secure.middlewares=secure-frame-header@file
+      #- traefik.http.routers.lidarr-secure.middlewares=traefik-forward-auth@file
     ports:
       - 8686:8686
     restart: unless-stopped
