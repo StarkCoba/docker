@@ -38,7 +38,7 @@ services:
       - traefik.http.services.traefik-svc.loadbalancer.server.port=8080
 
       # add to router
-      - traefik.http.routers.traefik-secure.middlewares=secure-frame-header@file
+      - traefik.http.routers.traefik-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
       #- traefik.http.routers.traefik-secure-auth.middlewares=authentik@docker
 
 
