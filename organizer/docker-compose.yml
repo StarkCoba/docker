@@ -11,8 +11,8 @@ services:
       - branch=v2-master
     volumes:
       - ~/docker/organizer/config:/config
-    ports:
-      - 81:80
+    # ports:
+    #   - 81:80
     restart: unless-stopped
     labels:
       - traefik.enable=true  
