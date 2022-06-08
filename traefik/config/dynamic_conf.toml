@@ -39,12 +39,12 @@
       contentTypeNosniff = true
       browserXssFilter = true
       referrerPolicy = "same-origin"
-      contentSecurityPolicy = "frame-ancestors 'self' https://home.stark.dog" 
+      contentSecurityPolicy = "frame-ancestors 'self' https://home.stark.dog https://accounts.google.com"
     [http.middlewares.www-redirect.redirectregex]
       regex = "^(https?://)www.(.*)$"
       replacement = "${1}${2}"
     [http.middlewares.serviceheaders.headers]
-      accessControlAllowOriginList="home.stark.dog, plex.stark.dog"
+      accessControlAllowOriginList="home.stark.dog, plex.stark.dog, accounts.google.com"
   [http.services]
     [http.services.homeassistant.loadbalancer]
       [[http.services.homeassistant.loadbalancer.servers]]

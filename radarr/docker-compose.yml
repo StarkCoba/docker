@@ -33,7 +33,8 @@ services:
       - traefik.http.services.radarr-svc.loadbalancer.server.port=7878
 
       # add to router
-      - traefik.http.routers.radarr-secure.middlewares=secure-frame-header@file
+      - traefik.http.routers.radarr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      #- traefik.http.routers.radarr-secure.middlewares=secure-frame-header@file
 
 networks:
   default:

@@ -4,12 +4,13 @@ services:
   traefik-forward-auth:
     image: thomseddon/traefik-forward-auth:2.2.0-arm
     environment:
-      #- DEFAULT_PROVIDER=oidc
-      #- PROVIDERS_OIDC_ISSUER_URL=https://auth.stark.dog/auth/realms/starkdog
-      #- PROVIDERS_OIDC_CLIENT_ID=traefik
-      #- PROVIDERS_OIDC_CLIENT_SECRET=TLKNSlOzcZYWSuDKAZKDoZ2MSnW98CmO
-      - PROVIDERS_GOOGLE_CLIENT_ID=259773631267-jhb64epkb9lblps06ubklk5b2m1e0q6m.apps.googleusercontent.com
-      - PROVIDERS_GOOGLE_CLIENT_SECRET=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
+      - DEFAULT_PROVIDER=oidc
+      - PROVIDERS_OIDC_ISSUER_URL=https://auth.stark.dog/auth/realms/starkdog
+      #- PROVIDERS_OIDC_ISSUER_URL=https://auth.stark.dog/auth/realms/starkdog/broker/google/endpoint
+      - PROVIDERS_OIDC_CLIENT_ID=traefik
+      - PROVIDERS_OIDC_CLIENT_SECRET=TLKNSlOzcZYWSuDKAZKDoZ2MSnW98CmO
+      # - PROVIDERS_GOOGLE_CLIENT_ID=259773631267-jhb64epkb9lblps06ubklk5b2m1e0q6m.apps.googleusercontent.com
+      # - PROVIDERS_GOOGLE_CLIENT_SECRET=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
       - SECRET=is87g4987vgo748g
       # INSECURE_COOKIE is required if not using a https entrypoint
       - INSECURE_COOKIE=true

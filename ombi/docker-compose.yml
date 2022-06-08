@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+  ombi:
+    image: linuxserver/ombi:latest
+    restart: always
+    links:
+      - ombi_sql:ombi_sql
+    ports:
+      - "3579:3579"
+    volumes:
+      - /docker/containers/ombi/config:/config
+    container_name: ombi 
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ombi.entrypoints=web
+      - traefik.http.routers.ombi.rule=Host(`ombi.stark.dog`)
+      - traefik.http.routers.ombi.middlewares=redirect@file
+      - traefik.http.routers.ombi.priority=1
+
+      # https
+      - traefik.http.routers.ombi-secure.entrypoints=web-secure
+      - traefik.http.routers.ombi-secure.rule=Host(`ombi.stark.dog`)
+      - traefik.http.routers.ombi-secure.tls=true
+      - traefik.http.routers.ombi-secure.service=ombi-svc
+      - traefik.docker.network=traefik
+      # service
+      - traefik.http.services.ombi-svc.loadbalancer.server.port=3579
+
+      # add to router
+      - traefik.http.routers.ombi-secure.middlewares=secure-frame-header@file
+      #- traefik.http.routers.ombi-secure.middlewares=traefik-forward-auth@file
+
+  ombi_sql:
+    image: arm64v8/mysql:8-oracle
+    env_file: .env
+    restart: always
+    volumes:
+      - ~/docker/ombi/db:/var/lib/mysql
+    container_name: ombi_sql
+
+networks:
+  default:
+    name: traefik
+    external: true
