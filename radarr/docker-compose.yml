@@ -12,8 +12,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ~/docker/radarr/config:/config
-      - /mnt/Storage_And_Media/usenet/downloads:/downloads
-      - /mnt/Storage_And_Media/media/movies:/movies
+      - /mnt/Storage_And_Media/media/:/movies
     container_name: radarr
     labels:
       - traefik.enable=true

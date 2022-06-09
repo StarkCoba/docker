@@ -13,8 +13,7 @@ services:
     volumes:
       - /dev/rtc:/dev/rtc:ro
       - ~/docker/sonarr/config:/config
-      - /mnt/Storage_And_Media/media/tv:/media/tv
-      - /mnt/Storage_And_Media/usenet/downloads:/downloads/
+      - /mnt/Storage_And_Media/media/:/media/
     container_name: sonarr
     labels:
       - traefik.enable=true

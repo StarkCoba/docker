@@ -9,8 +9,7 @@ services:
       - TZ=America/New_York
     volumes:
       - /home/stark/docker/lidarr/config:/config
-      - /mnt/Storage_And_Media/media/music:/music 
-      - /mnt/Storage_And_Media/usenet/downloads:/downloads
+      - /mnt/Storage_And_Media/media/:/music 
     labels:
       - traefik.enable=true
       - traefik.http.routers.lidarr.entrypoints=web
