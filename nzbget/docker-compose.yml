@@ -11,7 +11,7 @@ services:
       - PGID=1001
     volumes:
       - ~/docker/nzbget/config:/config
-      - /mnt/Storage_And_Media/media/downloads:/downloads/
+      - /mnt/Storage_And_Media/usenet/downloads:/downloads/
     container_name: nzbget
     labels:
       - traefik.enable=true
