@@ -9,6 +9,8 @@ services:
       - '8443:443'
     volumes:
       - /mnt/Storage_And_Media/website:/usr/local/apache2/htdocs
+    environment:
+      - ServerName localhost
     labels:
       - traefik.enable=true
       - traefik.http.routers.httpd.entrypoints=web
@@ -28,4 +30,7 @@ services:
 
       # add to router
       - traefik.http.routers.httpd-secure.middlewares=secure-frame-header@file
-    
+networks:
+  default:
+    name: traefik
+    external: true
