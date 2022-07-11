@@ -6,8 +6,8 @@ services:
     restart: always
     links:
       - ombi_sql:ombi_sql
-    ports:
-      - "3579:3579"
+    # ports:
+    #   - "3579:3579"
     volumes:
       - /docker/containers/ombi/config:/config
     container_name: ombi 
@@ -28,8 +28,9 @@ services:
       - traefik.http.services.ombi-svc.loadbalancer.server.port=3579
 
       # add to router
-      - traefik.http.routers.ombi-secure.middlewares=secure-frame-header@file
+      #- traefik.http.routers.ombi-secure.middlewares=secure-frame-header@file
       #- traefik.http.routers.ombi-secure.middlewares=traefik-forward-auth@file
+      - traefik.http.routers.ombi-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
 
   ombi_sql:
     image: arm64v8/mysql:8-oracle

@@ -22,7 +22,7 @@ services:
     tty: true
     volumes:
       - /mnt/Storage_And_Media/:/mnt
-    command: '-s "Media Volume;/mnt;yes;no;no;stark;stark;stark" -u "stark;bigpoo"'
+    command: '-s "Pi;/mnt;yes;no;no;stark;stark;stark" -u "stark;bigpoo"'
 
 networks:
   default:

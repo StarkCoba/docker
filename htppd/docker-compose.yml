@@ -4,9 +4,9 @@ services:
     restart: unless-stopped
     image: httpd:latest
     container_name: my-apache-app
-    ports:
-       - '8023:80'
-       - '8443:443'
+    # ports:
+    #    - '8023:80'
+    #    - '8443:443'
     volumes:
       - /mnt/Storage_And_Media/website:/usr/local/apache2/htdocs
     labels:
