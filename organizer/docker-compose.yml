@@ -4,8 +4,8 @@ services:
     image: organizr/organizr
     container_name: organizer
     environment:
-      - PUID=1001
-      - PGID=1001
+      - PUID=1000
+      - PGID=1000
       - TZ=America/New_York
       - fpm=true
       - branch=v2-master
@@ -32,7 +32,8 @@ services:
       - traefik.http.services.organizr-svc.loadbalancer.server.port=80
 
       # add to router
-      - traefik.http.routers.organizr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      #- traefik.http.routers.organizr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      - traefik.http.routers.organizr-secure.middlewares=secure-frame-header@file
 networks:
   default:
     name: traefik

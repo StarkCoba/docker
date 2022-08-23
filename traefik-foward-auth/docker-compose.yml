@@ -3,7 +3,7 @@ version: "3.3"
 services:
   traefik-forward-auth:
     restart: always
-    image: thomseddon/traefik-forward-auth:2.2.0-arm
+    image: thomseddon/traefik-forward-auth:latest
     environment:
       - DEFAULT_PROVIDER=oidc
       #- DEFAULT_PROVIDER=google

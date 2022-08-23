@@ -5,8 +5,8 @@ services:
     image: lscr.io/linuxserver/plex:latest
     restart: always
     environment:
-      - PUID=1001
-      - PGID=1001
+      - PUID=1000
+      - PGID=1000
       - ADVERTISE_IP="http://192.168.86.198:32400/"
       - VERSION=latest
     volumes:
@@ -14,6 +14,7 @@ services:
       - /mnt/Storage_And_Media/media/tv:/media/tv
       - /mnt/Storage_And_Media/media/movies:/media/movies
       - /mnt/Storage_And_Media/media/music:/media/music
+      
     ports:
      - 32400:32400 
      - 1900:1900/udp 

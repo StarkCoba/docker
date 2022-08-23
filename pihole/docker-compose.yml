@@ -78,7 +78,7 @@ services:
 
       # add to router
       #- traefik.http.routers.pihole-secure.middlewares=secure-frame-header@file
-      - traefik.http.routers.pihole-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      - traefik.http.routers.pihole-secure.middlewares=secure-frame-header@file
 
     restart: unless-stopped
     

@@ -4,8 +4,8 @@ services:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
     environment:
-      - PUID=1001
-      - PGID=1001
+      - PUID=1000
+      - PGID=1000
       - TZ=America/New_York
     volumes:
       - /home/stark/docker/lidarr/config:/config
@@ -28,9 +28,8 @@ services:
       - traefik.http.services.lidarr-svc.loadbalancer.server.port=8686
 
       # add to router
-      - traefik.http.routers.lidarr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
-      #- traefik.http.routers.lidarr-secure.middlewares=traefik-forward-auth@file
-    # ports:
+      #- traefik.http.routers.lidarr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      - traefik.http.routers.lidarr-secure.middlewares=secure-frame-header@file
     #   - 8686:8686
     restart: unless-stopped
 

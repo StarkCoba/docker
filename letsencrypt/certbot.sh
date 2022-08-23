@@ -2,7 +2,7 @@
 docker run -ti --rm \
     -v "/home/stark/docker/letsencrypt/certs:/etc/letsencrypt" \
     -v "/home/stark/docker/letsencrypt/config/cloudflare.ini:/cloudflare.ini" \
-    certbot/dns-cloudflare:arm64v8-latest \
+    certbot/dns-cloudflare:latest \
     certonly \
     --dns-cloudflare \
     --dns-cloudflare-credentials /cloudflare.ini \

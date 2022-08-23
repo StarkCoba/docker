@@ -1,0 +1,40 @@
+version: "2.1"
+services:
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /path/to/data:/config
+      - /mnt/Storage_And_Media/media/books:/media/books
+      - /mnt/Storage_And_Media/usenet/downloads:/downloads
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.readarr.entrypoints=web
+      - traefik.http.routers.readarr.rule=Host(`readarr.stark.dog`)
+      - traefik.http.routers.readarr.middlewares=redirect@file
+      - traefik.http.routers.readarr.priority=1
+
+      # https
+      - traefik.http.routers.readarr-secure.entrypoints=web-secure
+      - traefik.http.routers.readarr-secure.rule=Host(`readarr.stark.dog`)
+      - traefik.http.routers.readarr-secure.tls=true
+      - traefik.http.routers.readarr-secure.service=readarr-svc
+      - traefik.docker.network=traefik
+      # service
+      - traefik.http.services.readarr-svc.loadbalancer.server.port=8787
+
+      # add to router
+      #- traefik.http.routers.readarr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      - traefik.http.routers.readarr-secure.middlewares=secure-frame-header@file
+
+networks:
+  default:
+    name: traefik
+    external: true

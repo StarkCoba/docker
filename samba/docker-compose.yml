@@ -5,8 +5,8 @@ services:
     image: dperson/samba
     environment:
       TZ: 'EST5EDT'
-      USERID: 1001
-      GROUPID: 1001
+      USERID: 1000
+      GROUPID: 1000
     networks:
       - default
     ports:
