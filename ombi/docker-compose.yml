@@ -30,10 +30,10 @@ services:
       # add to router
       #- traefik.http.routers.ombi-secure.middlewares=secure-frame-header@file
       #- traefik.http.routers.ombi-secure.middlewares=traefik-forward-auth@file
-      - traefik.http.routers.ombi-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+      - traefik.http.routers.ombi-secure.middlewares=secure-frame-header@file
 
   ombi_sql:
-    image: arm64v8/mysql:8-oracle
+    image: amd64/mysql:latest
     env_file: .env
     restart: always
     volumes:

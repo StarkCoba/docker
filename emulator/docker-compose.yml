@@ -1,10 +1,10 @@
 version: "2.1"
 services:
   emulatorjs:
-    # image: lscr.io/linuxserver/emulatorjs:latest
-    build:
-      context: /home/stark/test/docker-emulatorjs
-      dockerfile: Dockerfile
+    image: lscr.io/linuxserver/emulatorjs:1.6.3-ls16
+    # build:
+    #   context: /home/stark/dockeremu/docker-emulatorjs
+    #   dockerfile: Dockerfile
     container_name: emulatorjs
     environment:
       - PUID=1000
@@ -16,8 +16,8 @@ services:
       - /mnt/Storage_And_Media/media/games:/data
     ports:
       - 3001:3000
-      #- 81:80
-    #   - 4001:4001 #optional
+    #   #- 81:80
+    # #   - 4001:4001 #optional
     labels:
       - traefik.enable=true
       - traefik.http.routers.emu.entrypoints=web
@@ -25,32 +25,17 @@ services:
       - traefik.http.routers.emu.middlewares=redirect@file
       - traefik.http.routers.emu.priority=1
 
-      # - traefik.http.routers.prt.entrypoints=web
-      # - traefik.http.routers.prt.rule=Host(`emu.stark.dog`)
-      # - traefik.http.routers.prt.middlewares=redirect@file
-      # - traefik.http.routers.prt.priority=1
-
       # https
       - traefik.http.routers.emu-secure.entrypoints=web-secure
       - traefik.http.routers.emu-secure.rule=Host(`emu.stark.dog`)
       - traefik.http.routers.emu-secure.tls=true
       - traefik.http.routers.emu-secure.service=emu-svc
-
-      # - traefik.http.routers.prt-secure.entrypoints=web-secure
-      # - traefik.http.routers.prt-secure.rule=Host(`emu.stark.dog`)
-      # - traefik.http.routers.prt-secure.tls=true
-      # - traefik.http.routers.prt-secure.service=prt-svc
-
-
       - traefik.docker.network=traefik
       # service
       - traefik.http.services.emu-svc.loadbalancer.server.port=80
-      - traefik.http.services.prt-svc.loadbalancer.server.port=3000
 
       # add to router
-      #- traefik.http.routers.emu-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
       - traefik.http.routers.emu-secure.middlewares=secure-frame-header@file
-      #- traefik.http.routers.prt-secure.middlewares=secure-frame-header@file
     restart: unless-stopped
 networks:
   default:
