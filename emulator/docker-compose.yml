@@ -1,10 +1,7 @@
 version: "2.1"
 services:
   emulatorjs:
-    image: lscr.io/linuxserver/emulatorjs:1.6.3-ls16
-    # build:
-    #   context: /home/stark/dockeremu/docker-emulatorjs
-    #   dockerfile: Dockerfile
+    image: lscr.io/linuxserver/emulatorjs:latest
     container_name: emulatorjs
     environment:
       - PUID=1000
