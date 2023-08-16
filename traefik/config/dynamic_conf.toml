@@ -48,7 +48,7 @@
   [http.services]
     [http.services.homeassistant.loadbalancer]
       [[http.services.homeassistant.loadbalancer.servers]]
-        url = "http://192.168.86.198:8123"
+        url = "http://192.168.86.46:8123"
   [http.routers]
     [http.routers.homeassistant]
       rule="Host(`ha.stark.dog`)" 

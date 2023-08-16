@@ -1,0 +1,38 @@
+version: '2'
+  services:
+    maddy:
+      image: foxcpp/maddy:latest
+      restart: always
+      environment:
+        -PUID=1000
+        -PGID=1000
+        -MADDY_HOSTNAME=mail.stark.dog
+        -MADDY_DOMAIN=stark.dog
+      volumes:
+        /data:/data
+      container_name: maddy
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.sonarr.entrypoints=web
+        - traefik.http.routers.sonarr.rule=Host(`mail.stark.dog`)
+        - traefik.http.routers.sonarr.middlewares=redirect@file
+        - traefik.http.routers.sonarr.priority=1
+
+        # https
+        - traefik.http.routers.sonarr-secure.entrypoints=web-secure
+        - traefik.http.routers.sonarr-secure.rule=Host(`mail.stark.dog`)
+        - traefik.http.routers.sonarr-secure.tls=true
+        - traefik.http.routers.sonarr-secure.service=sonarr-svc
+        - traefik.docker.network=traefik
+        # service
+        - traefik.http.services.sonarr-svc.loadbalancer.server.port=8000
+
+        # add to router
+        #- traefik.http.routers.sonarr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+        - traefik.http.routers.sonarr-secure.middlewares=secure-frame-header@file
+
+
+networks:
+  default:
+    name: traefik
+    external: true

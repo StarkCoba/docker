@@ -26,8 +26,8 @@ services:
     container_name: pihole
     image: pihole/pihole:latest
     ports:
-      - "192.168.86.198:53:53/tcp"
-      - "192.168.86.198:53:53/udp"
+      - "192.168.86.43:53:53/tcp"
+      - "192.168.86.43:53:53/udp"
         #      - "67:67/udp"
       - "8077:80/tcp"
         #- "44377:443/tcp"
@@ -36,7 +36,7 @@ services:
         #  - "1.1.1.1"
     environment:
       TZ: 'America/New York'
-      ServerIP: 192.168.86.198
+      ServerIP: 192.168.86.43
       VIRTUAL_HOST: pihole.stark.dog
       VIRTUAL_PORT: 80
 
