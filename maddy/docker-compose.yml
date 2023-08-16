@@ -13,23 +13,23 @@ services:
       container_name: maddy
       labels:
         - traefik.enable=true
-        - traefik.http.routers.sonarr.entrypoints=web
-        - traefik.http.routers.sonarr.rule=Host(`mail.stark.dog`)
-        - traefik.http.routers.sonarr.middlewares=redirect@file
-        - traefik.http.routers.sonarr.priority=1
+        - traefik.http.routers.mail.entrypoints=web
+        - traefik.http.routers.mail.rule=Host(`mail.stark.dog`)
+        - traefik.http.routers.mail.middlewares=redirect@file
+        - traefik.http.routers.mail.priority=1
 
         # https
-        - traefik.http.routers.sonarr-secure.entrypoints=web-secure
-        - traefik.http.routers.sonarr-secure.rule=Host(`mail.stark.dog`)
-        - traefik.http.routers.sonarr-secure.tls=true
-        - traefik.http.routers.sonarr-secure.service=sonarr-svc
+        - traefik.http.routers.mail-secure.entrypoints=web-secure
+        - traefik.http.routers.mail-secure.rule=Host(`mail.stark.dog`)
+        - traefik.http.routers.mail-secure.tls=true
+        - traefik.http.routers.mail-secure.service=mail-svc
         - traefik.docker.network=traefik
         # service
-        - traefik.http.services.sonarr-svc.loadbalancer.server.port=8000
+        - traefik.http.services.mail-svc.loadbalancer.server.port=8000
 
         # add to router
-        #- traefik.http.routers.sonarr-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
-        - traefik.http.routers.sonarr-secure.middlewares=secure-frame-header@file
+        #- traefik.http.routers.mail-secure.middlewares=traefik-forward-auth@file,secure-frame-header@file
+        - traefik.http.routers.mail-secure.middlewares=secure-frame-header@file
 
 
 networks:
